@@ -63,7 +63,7 @@ function App() { // Definierar huvudkomponenten för spelet
 
   return (
     <div className="container py-5"> {/* Yttre wrapper med Bootstrap-padding */}
-      <h1 className="mb-4 text-primary">Tic-Tac-Toe</h1> {/* Rubrik med Bootstrap-färg */}
+      <h1 className="mb-4 text-primary">Tic-Tac-Toe</h1> 
       <button
         className="btn btn-outline-primary mb-4"
         style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '8px 24px' }}
@@ -71,12 +71,12 @@ function App() { // Definierar huvudkomponenten för spelet
       >
         Starta om spelet
       </button> {/* Knapp för att starta om spelet */}
-      <div className="d-flex justify-content-center"> {/* Centrerar brädet horisontellt */}
+      <div className="d-flex justify-content-center"> 
         <div
           className="d-grid"
           style={{
-            gridTemplateColumns: 'repeat(3, 80px)', // Tre kolumner, 80px breda
-            gap: '18px' // Avstånd mellan rutorna
+            gridTemplateColumns: 'repeat(3, 80px)', 
+            gap: '18px' 
           }}
         >
           {board.map((cell, idx) => (
@@ -84,16 +84,16 @@ function App() { // Definierar huvudkomponenten för spelet
               key={idx} // Unik nyckel för varje ruta
               className="btn btn-light shadow-sm"
               style={{
-                width: '80px', // Storlek på ruta
+                width: '80px', 
                 height: '80px',
-                fontSize: '2.5rem', // Stor text för X/O
+                fontSize: '2.5rem', 
                 fontWeight: 'bold',
-                display: 'flex', // Flex för att centrera innehållet
+                display: 'flex', 
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '2px solid #0d6efd', // Blå kant
+                border: '2px solid #0d6efd', 
                 borderRadius: '12px',
-                color: cell === 'X' ? '#0d6efd' : '#dc3545', // Färg: blå för X, röd för O
+                color: cell === 'X' ? '#0d6efd' : '#dc3545', 
                 transition: 'background 0.2s'
               }}
               onClick={() => handleClick(idx)} // Hanterar klick på ruta
