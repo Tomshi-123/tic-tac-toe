@@ -1,120 +1,118 @@
-import React, { useState } from 'react'; // Importerar React och useState-hooken för att hantera state
-import './App.css'; // Importerar grundläggande CSS
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importerar Bootstrap för snyggare standardstilar
+import { useState } from 'react';
+import './App.css';
 
-function App() { // Definierar huvudkomponenten för spelet
-
-  // State: En array med 9 platser (en för varje ruta), alla börjar som null (tomma)
+function App() {
   const [board, setBoard] = useState<Array<string | null>>(Array(9).fill(null));
-  // State: true om det är X:s tur, false om det är O:s tur
   const [isXNext, setIsXNext] = useState(true);
-  // State: Vinnare, null om ingen vunnit än
   const [winner, setWinner] = useState<string | null>(null);
+  const [winnerIndexes, setWinnerIndexes] = useState<number[] | null>(null);
 
-  // Funktion som kontrollerar om någon har vunnit
   const checkWinner = (squares: Array<string | null>) => {
-    // Alla möjliga vinstkombinationer (rader, kolumner, diagonaler)
     const lines = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rader
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // kolumner
-      [0, 4, 8], [2, 4, 6]             // diagonaler
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
     ];
-    // Gå igenom varje vinstkombination
-    for (let line of lines) {
+    for (const line of lines) {
       const [a, b, c] = line;
-      // Om alla tre rutor är lika och inte tomma, returnera vinnaren
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return { winner: squares[a], indexes: line };
       }
     }
-    // Ingen vinnare hittad
     return null;
   };
 
-  // Funktion som körs när användaren klickar på en ruta
   const handleClick = (idx: number) => {
-    // Om det redan finns en vinnare eller rutan är upptagen, gör inget
     if (winner || board[idx]) return;
-
-    // Kopiera brädet för att inte ändra state direkt
     const newBoard = [...board];
-    // Sätt X eller O beroende på vems tur det är
     newBoard[idx] = isXNext ? 'X' : 'O';
-    // Uppdatera brädet
     setBoard(newBoard);
 
-    // Kolla om någon har vunnit efter draget
-    const win = checkWinner(newBoard);
-    if (win) {
-      setWinner(win); // Sätt vinnaren
+    const result = checkWinner(newBoard);
+    if (result) {
+      setWinner(result.winner);
+      setWinnerIndexes(result.indexes);
     } else if (!newBoard.includes(null)) {
-      setWinner('Oavgjort'); // Om brädet är fullt och ingen vunnit: oavgjort
+      setWinner('Oavgjort');
+      setWinnerIndexes(null);
     } else {
-      setIsXNext(!isXNext); // Växla spelare om ingen vunnit
+      setIsXNext(!isXNext);
     }
   };
 
-  // Funktion för att starta om spelet
   const resetGame = () => {
-    setBoard(Array(9).fill(null)); // Tömmer brädet
-    setIsXNext(true); // X börjar alltid
-    setWinner(null); // Ingen vinnare i början
+    setBoard(Array(9).fill(null));
+    setIsXNext(true);
+    setWinner(null);
+    setWinnerIndexes(null);
   };
 
   return (
-    <div className="container py-5"> {/* Yttre wrapper med Bootstrap-padding */}
-      <h1 className="mb-4 text-primary">Tic-Tac-Toe</h1> 
+    <div
+      className="container py-5"
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        minHeight: '100vh',
+        justifyContent: 'center'
+      }}
+    >
+      <h1 className="mb-4" style={{ color: '#6ae3ff', textShadow: '0 0 12px #6ae3ff88' }}>Tic-Tac-Toe</h1>
       <button
-        className="btn btn-outline-primary mb-4"
-        style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '8px 24px' }}
+        className="btn btn-outline-info mb-4"
+        style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '8px 24px', color: '#6ae3ff', borderColor: '#6ae3ff' }}
         onClick={resetGame}
       >
         Starta om spelet
-      </button> {/* Knapp för att starta om spelet */}
-      <div className="d-flex justify-content-center"> 
+      </button>
+      <div className="d-flex justify-content-center">
         <div
           className="d-grid"
           style={{
-            gridTemplateColumns: 'repeat(3, 80px)', 
-            gap: '18px' 
+            gridTemplateColumns: 'repeat(3, 80px)',
+            gap: '18px'
           }}
         >
           {board.map((cell, idx) => (
             <button
-              key={idx} // Unik nyckel för varje ruta
-              className="btn btn-light shadow-sm"
+              key={idx}
+              className={`btn shadow-sm${winnerIndexes && winnerIndexes.includes(idx) ? ' blink' : ''}`}
               style={{
-                width: '80px', 
+                width: '80px',
                 height: '80px',
-                fontSize: '2.5rem', 
+                fontSize: '2.5rem',
                 fontWeight: 'bold',
-                display: 'flex', 
+                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '2px solid #0d6efd', 
+                border: '2px solid #fff',
                 borderRadius: '12px',
-                color: cell === 'X' ? '#0d6efd' : '#dc3545', 
+                color: cell === 'X' ? '#6ae3ff' : '#ffe066',
+                background: '#172554',
+                boxShadow: '0 2px 12px #000a, 0 0 8px #6ae3ff44',
                 transition: 'background 0.2s'
               }}
-              onClick={() => handleClick(idx)} // Hanterar klick på ruta
-              disabled={!!cell || !!winner} // Inaktivera om rutan är upptagen eller spelet är slut
+              onClick={() => handleClick(idx)}
+              disabled={!!cell || !!winner}
             >
-              {cell} {/* Visar X, O eller tomt */}
+              {cell}
             </button>
           ))}
         </div>
       </div>
-      {/* Visar statusmeddelande under brädet */}
       <p className="mt-4 fs-5">
         {winner
           ? winner === 'Oavgjort'
             ? <span className="text-secondary">Oavgjort!</span>
-            : <span className={winner === 'X' ? "text-primary" : "text-danger"}>Vinnare: {winner}</span>
-          : <>Nästa spelare: <span className={isXNext ? "text-primary" : "text-danger"}>{isXNext ? 'X' : 'O'}</span></>
+            : <span style={{ color: winner === 'X' ? '#6ae3ff' : '#ffe066', textShadow: '0 0 8px #fff' }}>Vinnare: {winner}</span>
+          : <><span style={{ color: '#ffffff' }}>Nästa spelare: </span><span style={{ color: isXNext ? '#6ae3ff' : '#ffe066' }}>{isXNext ? 'X' : 'O'}</span></>
         }
       </p>
     </div>
   );
 }
 
-export default App; // Exporterar App-komponenten så att den kan användas i projektet
+export default App;

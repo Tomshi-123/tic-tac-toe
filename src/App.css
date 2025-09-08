@@ -1,7 +1,41 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Root ska bara fylla hela fönstret och vara mörk */
+html, body, #root {
+  background: #0a1433;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+/* Blinkande ruta när man vinner */
+@keyframes blink {
+  0%, 100% { background-color: #172554; }
+  50% { background-color: #6ae3ff; }
+}
+
+.blink {
+  animation: blink 0.4s linear infinite;
+}
+
+/* Stjärnorna i bakgrunden */
+.stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0; /* ligger bakom spelet */
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: star-blink 1.5s infinite alternate;
+}
+
+@keyframes star-blink {
+  0% { opacity: 0.1; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
